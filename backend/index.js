@@ -1,43 +1,54 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import mongoose from "mongoose";
 
 const app = express();
 const PORT = 3001;
+const url = `mongodb+srv://juanadrianpaul:MikwIc8fSLa7qbYF@cluster0.rjnjn9l.mongodb.net/phonebook?retryWrites=true&w=majority`;
+
+mongoose.set("strictQuery", false);
+mongoose.connect(url);
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+});
+
+const Person = mongoose.model("Person", personSchema);
+
+morgan.token("body", function (req, res) {
+  return JSON.stringify(req.body);
+});
 
 app.use(express.json());
 app.use(cors());
-app.use(requestLogger);
+app.use(
+  morgan(":method :url :status :response-time ms - :res[content-length]:body")
+);
 
-app.use(morgan("dev"));
+app.use(express.static("dist"));
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Adrian Juan",
-    number: "123-456-7890",
-  },
-];
+// let persons = [
+//   {
+//     id: 1,
+//     name: "Arto Hellas",
+//     number: "040-123456",
+//   },
+//   {
+//     id: 2,
+//     name: "Ada Lovelace",
+//     number: "39-44-5323523",
+//   },
+//   {
+//     id: 3,
+//     name: "Adrian Juan",
+//     number: "123-456-7890",
+//   },
+// ];
 
 function unknownEndpoint(request, response) {
   response.status(404).send({ error: "unknown endpoint" });
-}
-
-function requestLogger(request, response, next) {
-  console.log(`Method: ${request.method}`);
-  console.log(`Path: ${request.path}`);
-  console.log(`body: ${request.body}`);
-  next();
 }
 
 function generateId() {
@@ -51,7 +62,9 @@ app.get("/", (request, response) => {
 });
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
