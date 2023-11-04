@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import morgan from "morgan";
+// import morgan from "morgan";
 import mongoose from "mongoose";
 import Person from "./models/Person.js";
 import dotenv from "dotenv";
@@ -21,9 +21,9 @@ morgan.token("body", function (req, res) {
 
 app.use(express.json());
 app.use(cors());
-app.use(
-  morgan(":method :url :status :response-time ms - :res[content-length]:body")
-);
+// app.use(
+//   morgan(":method :url :status :response-time ms - :res[content-length]:body")
+// );
 
 app.use(express.static("dist"));
 
