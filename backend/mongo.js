@@ -19,16 +19,16 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model("Person", personSchema);
 
-// Create and save objects
-const person = new Person({
-  name: "Adrian Juan",
-  number: "09123456789",
-});
+// // Create and save objects
+// const person = new Person({
+//   name: "Adrian Juan",
+//   number: "09123456789",
+// });
 
-person.save().then((result) => {
-  console.log("person saved!");
-  mongoose.connection.close();
-});
+// person.save().then((result) => {
+//   console.log("person saved!");
+//   mongoose.connection.close();
+// });
 
 //Fetch objects from database = GET all
 Person.find({}).then((result) => {

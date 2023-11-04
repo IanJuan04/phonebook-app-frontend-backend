@@ -2,20 +2,18 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import mongoose from "mongoose";
+import Person from "./models/Person.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const PORT = 3001;
-const url = `mongodb+srv://juanadrianpaul:MikwIc8fSLa7qbYF@cluster0.rjnjn9l.mongodb.net/phonebook?retryWrites=true&w=majority`;
+const url = process.env.MONGODB_URI;
+// to see the env, it needs to be installed in the terminal ising npm install dotenv and import it and use .config
 
 mongoose.set("strictQuery", false);
 mongoose.connect(url);
-
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-});
-
-const Person = mongoose.model("Person", personSchema);
 
 morgan.token("body", function (req, res) {
   return JSON.stringify(req.body);
@@ -68,17 +66,28 @@ app.get("/api/persons", (request, response) => {
 });
 
 app.get("/api/persons/:id", (request, response) => {
-  const id = parseInt(request.params.id);
-  const person = persons.filter((person) => person.id === id);
-  response.json(person);
+  const id = request.params.id;
+  Person.findById(id).then((person) => response.json(person));
 });
 
+// to indicate a unused functio put an "_"
 app.delete("/api/persons/:id", (request, response) => {
-  const id = parseInt(request.params.id);
-  persons = persons.filter((person) => person.id !== id);
-
-  response.status(204).end();
+  const id = request.params.id;
+  Person.findByIdAndDelete(id).then((_returnStatus) =>
+    response.status(204).end()
+  );
 });
+
+// Create and save objects
+// const person = new Person({
+//   name: "Adrian Juan",
+//   number: "09123456789",
+// });
+
+// person.save().then((result) => {
+//   console.log("person saved!");
+//   mongoose.connection.close();
+// });
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
@@ -87,15 +96,14 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({ error: "content missing!" });
   }
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: generateId(),
-  };
+  });
 
-  persons = persons.concat(person);
-
-  response.status(201).json(person);
+  person.save().then((savedPerson) => {
+    response.status(201).json(savedPerson);
+  });
 });
 
 app.use(unknownEndpoint);
