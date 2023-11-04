@@ -15,9 +15,9 @@ const url = process.env.MONGODB_URI;
 mongoose.set("strictQuery", false);
 mongoose.connect(url);
 
-morgan.token("body", function (req, res) {
-  return JSON.stringify(req.body);
-});
+// morgan.token("body", function (req, res) {
+//   return JSON.stringify(req.body);
+// });
 
 app.use(express.json());
 app.use(cors());
