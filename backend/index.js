@@ -4,6 +4,7 @@ import morgan from "morgan";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import personRouter from "./routes/personRouter.js";
+import errorHandler from "./utils/errorHandler.js";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use(
 app.use(express.static("dist"));
 app.use("/api/persons", personRouter);
 app.use(unknownEndpoint);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);
