@@ -11,15 +11,15 @@ const personSchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Person",
+    ref: "User",
   },
 });
 
 personSchema.set("toJSON", {
-  transform: (document, returnObject) => {
-    returnObject.id = returnObject._id;
-    delete returnObject._id;
-    delete returnObject.__v;
+  transform: (_document, returnedObject) => {
+    returnedObject.id = returnedObject._id;
+    delete returnedObject._id;
+    delete returnedObject.__v;
   },
 });
 

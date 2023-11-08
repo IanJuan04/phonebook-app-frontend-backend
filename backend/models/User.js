@@ -16,11 +16,11 @@ userSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
-    delete returnedObject._v;
+    delete returnedObject.__v;
     delete returnedObject.passwordHash;
   },
 });
 
-const User = mongoos.model("Person", personSchema);
+const User = mongoose.model("User", userSchema);
 
 export default User;
